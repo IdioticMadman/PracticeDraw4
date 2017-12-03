@@ -72,6 +72,84 @@ public class Practice14FlipboardView extends View {
         int x = centerX - bitmapWidth / 2;
         int y = centerY - bitmapHeight / 2;
 
+        first(canvas, bitmapWidth, bitmapHeight, centerX, centerY, x, y);
+        second(canvas, bitmapWidth, bitmapHeight, centerX, centerY, x, y);
+    }
+
+    /**
+     * 需要不动的部分我们线绘制，需要动的部分后绘制。
+     * 通过clip 的方式来对View进行裁切
+     *
+     * @param canvas
+     * @param bitmapWidth
+     * @param bitmapHeight
+     * @param centerX
+     * @param centerY
+     * @param x
+     * @param y
+     */
+    private void second(Canvas canvas, int bitmapWidth, int bitmapHeight, int centerX, int centerY, int x, int y) {
+        x = x + bitmapWidth + 50;
+        canvas.save();
+//        canvas.clipRect(x, y, x + bitmapWidth, y + bitmapHeight / 2);
+        canvas.clipRect(0, 0, getWidth(), centerY);
+        canvas.drawBitmap(bitmap, x, y, paint);
+        canvas.restore();
+
+        canvas.save();
+
+        if (degree < 90) {
+            canvas.clipRect(0, centerY, getWidth(), getHeight());
+        } else {
+            canvas.clipRect(0, 0, getWidth(), centerY);
+        }
+        camera.save();
+        camera.rotateX(degree);
+        canvas.translate(centerX, centerY);
+        camera.applyToCanvas(canvas);
+        canvas.translate(-centerX, -centerY);
+        camera.restore();
+
+        canvas.drawBitmap(bitmap, x, y, paint);
+        canvas.restore();
+//        if (degree < 90) {
+//            canvas.clipRect(x, centerY, x + bitmapWidth, centerY + bitmapHeight / 2);
+//        }else {
+//
+//        }
+
+
+//        // 第一遍绘制：上半部分
+//        canvas.save();
+//        canvas.clipRect(0, 0, getWidth(), centerY);
+//        canvas.drawBitmap(bitmap, x, y, paint);
+//        canvas.restore();
+//
+//        // 第二遍绘制：下半部分
+//        canvas.save();
+//
+//        if (degree < 90) {
+//            canvas.clipRect(0, centerY, getWidth(), getHeight());
+//        } else {
+//            canvas.clipRect(0, 0, getWidth(), centerY);
+//        }
+//        camera.save();
+//        camera.rotateX(degree);
+//        canvas.translate(centerX, centerY);
+//        camera.applyToCanvas(canvas);
+//        canvas.translate(-centerX, -centerY);
+//        camera.restore();
+//
+//        canvas.drawBitmap(bitmap, x, y, paint);
+//        canvas.restore();
+    }
+
+    private void first(Canvas canvas, int bitmapWidth, int bitmapHeight, int centerX, int centerY, int x, int y) {
+        canvas.save();
+        canvas.clipRect(x, y, x + bitmapWidth, y + bitmapHeight / 2);
+        canvas.drawBitmap(bitmap, x, y, paint);
+        canvas.restore();
+
         canvas.save();
 
         camera.save();
@@ -81,6 +159,7 @@ public class Practice14FlipboardView extends View {
         canvas.translate(-centerX, -centerY);
         camera.restore();
 
+        canvas.clipRect(x, y + bitmapWidth / 2, x + bitmapWidth, y + bitmapHeight);
         canvas.drawBitmap(bitmap, x, y, paint);
         canvas.restore();
     }
